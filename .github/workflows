@@ -1,0 +1,37 @@
+name: Run Tests on Pull Request
+
+# Ejecutar el workflow en cada pull request
+on:
+  pull_request:
+    branches:
+      - main  # Puedes cambiar a la rama donde deseas aplicar esta acción
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:4.4
+        ports:
+          - 27017:27017
+        options: --bind_ip_all
+        env:
+          MONGO_INITDB_DATABASE: Unipro
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Especifica la versión de Node.js
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        env:
+          MONGODB_URI: mongodb://localhost:27017/Unipro
+        run: npm test
