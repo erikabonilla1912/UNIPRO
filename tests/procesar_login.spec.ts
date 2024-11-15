@@ -2,10 +2,10 @@ const request = require('supertest');
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const User = require('../userModel'); 
-const loginRouter = require('../login'); 
+const User = require('./userModel'); 
+const loginRouter = require('../../controllers/login'); 
 
-jest.mock('../userModel'); 
+jest.mock('../../models/userModel'); 
 
 const app = express();
 app.use(express.json());

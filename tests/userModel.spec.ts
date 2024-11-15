@@ -1,82 +1,68 @@
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const User = require('./userModel'); // Asegúrate de ajustar la ruta si es necesario
-
-let mongoServer;
-
-beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    const uri = mongoServer.getUri();
-    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-});
-
-afterAll(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
-});
-
-afterEach(async () => {
-    await mongoose.connection.db.dropDatabase();
-});
+const userSchema = require('./userModel.js'); // Asegúrate de que la ruta sea correcta
 
 describe('User Model Test Suite', () => {
-    it('debería crear un usuario con éxito', async () => {
-        const userData = { nombre: 'Usuario Test', email: 'test@example.com', password: 'password123' };
-        const user = new User(userData);
-        const savedUser = await user.save();
+  let mongoServer;
 
-        expect(savedUser._id).toBeDefined();
-        expect(savedUser.nombre).toBe(userData.nombre);
-        expect(savedUser.email).toBe(userData.email);
-        expect(savedUser.password).toBe(userData.password);
+  beforeAll(async () => {
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     });
+  });
 
-    it('debería lanzar un error por email duplicado', async () => {
-        const userData = { nombre: 'Usuario Test', email: 'test@example.com', password: 'password123' };
-        const user1 = new User(userData);
-        await user1.save();
+  afterAll(async () => {
+    await mongoose.disconnect();
+    await mongoServer.stop();
+  });
 
-        const user2 = new User(userData);
-        let error;
-        try {
-            await user2.save();
-        } catch (e) {
-            error = e;
-        }
+  afterEach(async () => {
+    await User.deleteMany(); // Limpia los datos después de cada prueba
+  });
 
-        expect(error).toBeDefined();
-        expect(error.code).toBe(11000); // Código de error de MongoDB para duplicados
-    });
+  it('should create and save a user successfully', async () => {
+    const userData = { nombre: 'Juan', email: 'juan@example.com', password: 'securepassword' };
+    const user = new User(userData);
+    const savedUser = await user.save();
 
-    it('debería requerir un campo de email', async () => {
-        const userData = { nombre: 'Usuario Test', password: 'password123' };
-        const userWithoutEmail = new User(userData);
+    expect(savedUser._id).toBeDefined();
+    expect(savedUser.nombre).toBe(userData.nombre);
+    expect(savedUser.email).toBe(userData.email);
+    expect(savedUser.password).toBe(userData.password);
+  });
 
-        let error;
-        try {
-            await userWithoutEmail.save();
-        } catch (e) {
-            error = e;
-        }
+  it('should not save a user with a duplicate email', async () => {
+    const userData = { nombre: 'Juan', email: 'juan@example.com', password: 'securepassword' };
+    await new User(userData).save();
 
-        expect(error).toBeDefined();
-        expect(error.errors.email).toBeDefined();
-        expect(error.errors.email.kind).toBe('required');
-    });
+    const duplicateUser = new User(userData);
 
-    it('debería requerir un campo de nombre', async () => {
-        const userData = { email: 'test@example.com', password: 'password123' };
-        const userWithoutNombre = new User(userData);
+    let err;
+    try {
+      await duplicateUser.save();
+    } catch (error) {
+      err = error;
+    }
 
-        let error;
-        try {
-            await userWithoutNombre.save();
-        } catch (e) {
-            error = e;
-        }
+    expect(err).toBeDefined();
+    expect(err.code).toBe(11000); // Código de error para clave duplicada en MongoDB
+  });
 
-        expect(error).toBeDefined();
-        expect(error.errors.nombre).toBeDefined();
-        expect(error.errors.nombre.kind).toBe('required');
-    });
+  it('should throw a validation error if required fields are missing', async () => {
+    const user = new User({ email: 'missingfields@example.com' });
+
+    let err;
+    try {
+      await user.save();
+    } catch (error) {
+      err = error;
+    }
+
+    expect(err).toBeDefined();
+    expect(err.errors.nombre).toBeDefined();
+    expect(err.errors.password).toBeDefined();
+  });
 });

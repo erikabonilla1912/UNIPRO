@@ -1,7 +1,7 @@
 const request = require('supertest');
 const express = require('express');
 const bcrypt = require('bcrypt');
-const User = require('./userModel'); // Cambia a la ruta correcta del modelo de usuario
+const User = require('./userModel.js'); // Cambia a la ruta correcta del modelo de usuario
 const router = require('./rutaDelRouter'); // Cambia a la ruta del archivo donde exportas el router
 
 jest.mock('./userModel');

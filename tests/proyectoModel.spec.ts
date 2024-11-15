@@ -1,7 +1,6 @@
-//npm install --save-dev jest //mongodb-memory-server mongoose
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const Proyecto = require('./proyectoModel'); // Cambia a la ruta correcta del archivo
+const Proyecto = require('./proyectoModel.js'); 
 
 let mongoServer;
 

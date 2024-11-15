@@ -1,8 +1,8 @@
 const request = require('supertest');
 const express = require('express');
 const router = require('./rutaDelRouter'); // Cambia a la ruta del archivo donde exportas el router
-const User = require('./userModel');
-const Reclamo = require('./reclamoModel');
+const User = require('./userModel.js');
+const Reclamo = require('./reclamoModel.js');
 
 jest.mock('./userModel');
 jest.mock('./reclamoModel');

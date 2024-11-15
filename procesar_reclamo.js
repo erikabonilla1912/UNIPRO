@@ -1,11 +1,17 @@
 const express = require('express');
-const User = require('./userModel');
-const Reclamo = require('./reclamoModel');
+const User = require('/userModel');
+const Reclamo = require('/reclamoModel');
 
 const router = express.Router();
 
 router.post('/', async (req, res) => {
     const { email, asunto, mensaje } = req.body;
+
+    // Validación de campos
+    if (!email || !asunto || !mensaje) {
+        return res.status(400).send('Todos los campos son obligatorios');
+    }
+
     try {
         // Buscar al usuario por su correo electrónico
         const usuario = await User.findOne({ email });
@@ -16,6 +22,7 @@ router.post('/', async (req, res) => {
         // Crear el reclamo asociado al usuario encontrado
         const nuevoReclamo = new Reclamo({ usuario: usuario._id, asunto, mensaje });
         await nuevoReclamo.save();
+
         res.send('Reclamo enviado');
     } catch (error) {
         console.error(error);

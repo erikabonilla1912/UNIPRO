@@ -1,12 +1,9 @@
-// reclamoModel.js
-
 const mongoose = require('mongoose');
 
 const reclamoSchema = new mongoose.Schema({
-  titulo: String,
-  descripcion: String,
-  autor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } // Referencia al autor del reclamo
-});
+  titulo: { type: String, required: true, trim: true },
+  descripcion: { type: String, required: true, trim: true },
+  autor: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+}, { timestamps: true });
 
 module.exports = mongoose.model('Reclamo', reclamoSchema);
-

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const Reclamo = require('./reclamoModel'); // Cambia a la ruta correcta del archivo
+const Reclamo = require('./reclamoModel.js'); // Cambia a la ruta correcta del archivo
 
 let mongoServer;
 

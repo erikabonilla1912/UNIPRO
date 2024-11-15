@@ -1,9 +1,9 @@
 // tests/controllers/publicarProyecto.test.js
 const request = require('supertest');
 const express = require('express');
-const User = require('../../models/userModel');
-const Proyecto = require('../../models/proyectoModel');
-const publicarProyectoRouter = require('../../controllers/publicarProyecto');
+const User = require('./userModel.js');
+const Proyecto = require('./proyectoModel.js');
+const publicarProyectoRouter = require('./views/publicarProyecto');
 
 jest.mock('../../models/userModel');
 jest.mock('../../models/proyectoModel');
