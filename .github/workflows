@@ -1,10 +1,12 @@
 name: Run Tests on Pull Request
 
-# Ejecutar el workflow en cada pull request
+# Ejecutar el workflow en pull requests hacia las ramas `qa`, `staging` y `master`
 on:
   pull_request:
     branches:
-      - main  # Puedes cambiar a la rama donde deseas aplicar esta acción
+      - qa
+      - staging
+      - master
 
 jobs:
   test:
