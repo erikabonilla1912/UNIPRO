@@ -55,12 +55,29 @@ body {
     color: #0044ff;
 }
 
-h1 { font-size: 3.5em; }
-h2 { font-size: 2.7em; }
-h3 { font-size: 2em; }
-p { font-size: 1.25em; }
-ul { list-style: none; }
-li { font-size: 1.25em; }
+h1 {
+    font-size: 3.5em;
+}
+
+h2 {
+    font-size: 2.7em;
+}
+
+h3 {
+    font-size: 2em;
+}
+
+p {
+    font-size: 1.25em;
+}
+
+ul {
+    list-style: none;
+}
+
+li {
+    font-size: 1.25em;
+}
 
 button {
     font-size: 1.25em;
@@ -93,7 +110,9 @@ button:hover {
     margin: auto;
 }
 
-.color-acento { color: rgb(43, 168, 226); }
+.color-acento {
+    color: rgb(43, 168, 226);
+}
 
 header {
     background-color: rgb(245, 245, 245);
@@ -227,7 +246,7 @@ header a:hover {
 
 footer {
     background-color: rgb(230, 230, 230);
-    text-align: center; 
+    text-align: center;
 }
 
 footer p {
@@ -427,4 +446,3 @@ footer .container2 {
 .resource-item a:hover {
     background-color: #004da3;
 }
-

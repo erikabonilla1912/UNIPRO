@@ -18,7 +18,8 @@ header {
     background-color: #f5f5f5;
     padding: 20px 0;
     text-align: center;
-    position: relative; /* Cambiado a posición relativa */
+    position: relative;
+    /* Cambiado a posición relativa */
 }
 
 header .logo {
@@ -139,8 +140,10 @@ h1 {
 
 .form-group input[type="text"],
 .form-group textarea {
-    width: 100%; /* Ajuste del ancho al 100% del contenedor */
-    max-width: 400px; /* Máximo ancho de los campos de entrada */
+    width: 100%;
+    /* Ajuste del ancho al 100% del contenedor */
+    max-width: 400px;
+    /* Máximo ancho de los campos de entrada */
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -149,7 +152,8 @@ h1 {
 
 .form-group textarea {
     resize: vertical;
-    height: 100px; /* Altura inicial del textarea */
+    height: 100px;
+    /* Altura inicial del textarea */
 }
 
 .form-group button {
