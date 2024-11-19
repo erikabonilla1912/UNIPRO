@@ -18,7 +18,8 @@ header {
     background-color: #f5f5f5;
     padding: 20px 0;
     text-align: center;
-    position: relative; /* Cambiado a posición relativa */
+    position: relative;
+    /* Cambiado a posición relativa */
 }
 
 header .logo {
@@ -104,9 +105,11 @@ header form button:hover {
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 20px;
-    margin: 80px auto 20px auto; /* Añadido margen superior para evitar que el encabezado lo cubra */
+    margin: 80px auto 20px auto;
+    /* Añadido margen superior para evitar que el encabezado lo cubra */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    max-width: 600px; /* Ancho máximo del formulario */
+    max-width: 600px;
+    /* Ancho máximo del formulario */
 }
 
 #project-form h2 {
@@ -140,8 +143,10 @@ header form button:hover {
 }
 
 #project-form textarea {
-    resize: vertical; /* Permitir redimensionar verticalmente */
-    height: 100px; /* Altura inicial del textarea */
+    resize: vertical;
+    /* Permitir redimensionar verticalmente */
+    height: 100px;
+    /* Altura inicial del textarea */
 }
 
 #project-form button[type="submit"] {
