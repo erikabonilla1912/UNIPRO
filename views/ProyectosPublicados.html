@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Proyectos publicados</title>
+    <link rel="stylesheet" href="ProyectosPublicados.css">
+    <link rel="stylesheet" type="text/css" href="ProyectosPublicados.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <img class="logo" src="https://i.imgur.com/fOxDc3Q.png" alt="Logo de Mi Sitio Web" width="300" height="135">
+            <form action="Busqueda.html" method="get">
+                <input type="search" name="q" placeholder="Buscar..." />
+                <button type="submit">Buscar</button>
+            </form>
+            <nav>
+                <a href="UNIPRO.html#somos-proya">Quienes Somos</a>
+                <a href="UNIPRO.html#nuestros-productos">Nuestros Productos</a>
+                <a href="UNIPRO.html#caracteristicas">Características</a>
+                <a href="UNIPRO.html#registrarse">Inicia sesión o regístrate</a>
+            </nav>
+
+        </div>
+        <div id="icon-container">
+            <div class="icon-link">
+                <a class="button_rank_quejas" target="_blank" href="QuejasYReclamos.html">
+                    <img
+                        src="https://w7.pngwing.com/pngs/100/701/png-transparent-computer-icons-complaints-cdr-text-internet.png">
+
+                </a>
+            </div>
+            <div class="icon-link">
+                <a class="button_rank_preguntas" target="_blank" href="PreguntasFrecuentes.html">
+                    <img
+                        src="https://www.itm.edu.co//wp-content/uploads/2021/bienestar/presupuesto-participativo/pp-7.jpg">
+
+                </a>
+            </div>
+        </div>
+
+
+    </header>
+
+
+
+    <section id="hero">
+        <h1>Proyectos publicados</h1>
+    </section>
+
+
+    <!-- Contenedor donde se mostrarán los proyectos -->
+    <section id="proyectos-lista">
+        <div id="proyectos-container">
+            <!-- Aquí se mostrarán los proyectos -->
+        </div>
+    </section>
+
+
+    <footer>
+        <div class="container">
+            <p>&copy; UNIPRO 2024</p>
+        </div>
+    </footer>
+
+    <script>
+        // Obtener los proyectos desde el backend y mostrarlos
+        async function cargarProyectos() {
+    try {
+        const response = await fetch('/proyectos'); // Hacer la solicitud GET
+        if (!response.ok) {
+            throw new Error('Error al obtener proyectos');
+        }
+        const proyectos = await response.json();
+
+        const proyectosContainer = document.getElementById('proyectos-container');
+        proyectosContainer.innerHTML = '';
+
+        proyectos.forEach(proyecto => {
+            const proyectoDiv = document.createElement('div');
+            proyectoDiv.classList.add('proyecto');
+            proyectoDiv.innerHTML = `
+                <h3>${proyecto.titulo}</h3>
+                <p><strong>Descripción:</strong> ${proyecto.descripcion}</p>
+            `;
+            proyectosContainer.appendChild(proyectoDiv);
+        });
+    } catch (error) {
+        console.error('Error al cargar los proyectos:', error);
+        const proyectosContainer = document.getElementById('proyectos-container');
+        proyectosContainer.innerHTML = '<p>Hubo un error al cargar los proyectos.</p>';
+    }
+}
+
+        // Llamar a la función para cargar los proyectos cuando la página cargue
+        window.onload = cargarProyectos;
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

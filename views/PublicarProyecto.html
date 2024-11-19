@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,10 +18,12 @@
             height: 100%;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.4);
-            justify-content: center; /* Centra el contenido del modal */
+            justify-content: center;
             align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
         }
-    
+
         .modal-content {
             background-color: #fbfefd;
             padding: 1.5rem;
@@ -36,7 +39,7 @@
             flex-direction: column;
             gap: 1rem;
         }
-    
+
         .modal-content .close {
             color: #9393d1;
             font-size: 1.25rem;
@@ -46,22 +49,22 @@
             top: 1rem;
             right: 1rem;
         }
-    
+
         .modal-content .close:hover {
             color: #38bdf1;
         }
-    
+
         .modal-content p {
             margin: 0;
             text-align: left;
             font-weight: normal;
         }
-    
+
         .modal-content .highlight {
             font-weight: bold;
             margin-bottom: 0.5rem;
         }
-    
+
         .modal-content button {
             background-color: #007bff;
             color: white;
@@ -70,25 +73,21 @@
             font-size: 1rem;
             border-radius: 0.3rem;
             cursor: pointer;
-            align-self: flex-end; /* Botón alineado a la esquina inferior derecha */
+            align-self: flex-end;
+            /* Botón alineado a la esquina inferior derecha */
         }
-    
+
         .modal-content button:hover {
             background-color: #0056b3;
         }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
     </style>
-    
-    <!-- Modal -->
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <span class="close" onclick="cerrarModal()">&times;</span>
-            <p class="highlight">¡Excelente trabajo!</p>
-            <p id="modalMessage">Proyecto publicado</p>
-            <button onclick="cerrarModal()">Aceptar</button>
-        </div>
-    </div>
-    
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -107,39 +106,39 @@
         <div id="icon-container">
             <div class="icon-link">
                 <a class="button_rank_quejas" target="_blank" href="QuejasYReclamos.html">
-                    <img src="https://w7.pngwing.com/pngs/100/701/png-transparent-computer-icons-complaints-cdr-text-internet.png">
+                    <img
+                        src="https://w7.pngwing.com/pngs/100/701/png-transparent-computer-icons-complaints-cdr-text-internet.png">
                 </a>
             </div>
             <div class="icon-link">
                 <a class="button_rank_preguntas" target="_blank" href="PreguntasFrecuentes.html">
-                    <img src="https://www.itm.edu.co//wp-content/uploads/2021/bienestar/presupuesto-participativo/pp-7.jpg">
+                    <img
+                        src="https://www.itm.edu.co//wp-content/uploads/2021/bienestar/presupuesto-participativo/pp-7.jpg">
                 </a>
             </div>
         </div>
     </header>
 
     <!-- Formulario de Publicar Proyecto -->
-    <div id="project-form">
+    <div id="form-container">
         <h2>Publicar Proyecto</h2>
-        <form action="/procesar_proyecto" method="post" id="projectForm" enctype="multipart/form-data">
-            <div>
-                <label for="titulo">Título:</label>
-                <input type="text" id="titulo" name="titulo" required>
-            </div>
-            <div>
-                <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion" required></textarea>
-            </div>
-            <div>
-                <label for="imagen">Imagen:</label>
-                <input type="file" id="imagen" name="imagen" accept="image/*">
-            </div>
-            <div>
-                <label for="video">Video:</label>
-                <input type="file" id="video" name="video" accept="video/*">
-            </div>
-            <button type="submit">Publicar Proyecto</button>
-        </form>
+        <p>A continuación, verás un formulario donde podrás ingresar toda la información necesaria para publicar tu
+            proyecto. Asegúrate de completar todos los campos requeridos con la mayor precisión posible. Una vez que
+            hayas revisado todos los detalles y enviado tu proyecto, haz clic en el botón 'Publicar proyecto' y luego en
+            'Aceptar'. Después de hacerlo, serás automáticamente redirigido a la pestaña de 'Proyectos Publicados',
+            donde podrás ver tu proyecto junto con los demás que ya han sido compartidos.</p>
+            <form action="/procesar_proyecto" method="post" id="projectForm">
+                <div class="form-group">
+                    <label for="titulo">Título:</label>
+                    <input type="text" id="titulo" name="titulo" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+                </div>
+                <button type="submit">Publicar Proyecto</button>
+            </form>
+            
     </div>
 
     <!-- Modal -->
@@ -147,49 +146,58 @@
         <div class="modal-content">
             <span class="close" onclick="cerrarModal()">&times;</span>
             <p id="modalMessage"></p>
-            <button onclick="cerrarModal()">Aceptar</button>
+            <button onclick="cerrarModalYRedirigir()">Aceptar</button>
         </div>
     </div>
 
-    
-<footer>
-    <div class="container">
-        <p>&copy; UNIPRO 2024</p>
-    </div>
-</footer>
+    <footer>
+        <div class="container">
+            <p>&copy; UNIPRO 2024</p>
+        </div>
+    </footer>
 
-<script>
-    document.getElementById('projectForm').addEventListener('submit', async function (event) {
-        event.preventDefault(); // Evita la recarga de la página.
+    <script>
+        document.getElementById('projectForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Evita la recarga de la página.
 
-        const formData = new FormData(this); // Recoge los datos del formulario.
+            const formData = new FormData(this); // Recoge los datos del formulario.
 
-        try {
-            const response = await fetch('/procesar_proyecto', {
-                method: 'POST',
-                body: formData,
-            });
+            try {
+                const response = await fetch('/procesar_proyecto', {
+                    method: 'POST',
+                    body: formData,
+                });
 
-            const message = await response.text(); // Leer respuesta del servidor.
-            mostrarModal(message);
-        } catch (error) {
-            console.error('Error al enviar la solicitud:', error);
-            mostrarModal('Error al procesar el proyecto. Inténtalo de nuevo más tarde.');
+                const message = await response.text(); // Leer respuesta del servidor.
+                mostrarModal(message);
+            } catch (error) {
+                console.error('Error al enviar la solicitud:', error);
+                mostrarModal('Error al procesar el proyecto. Inténtalo de nuevo más tarde.');
+            }
+        });
+
+        function mostrarModal(mensaje) {
+            const modalMessage = document.getElementById('modalMessage');
+            modalMessage.textContent = mensaje;
+
+            const modal = document.getElementById('modal');
+            modal.classList.add('show');
         }
-    });
 
-    function mostrarModal(mensaje) {
-        const modalMessage = document.getElementById('modalMessage');
-        modalMessage.textContent = mensaje;
+        // Función para cerrar el modal y redirigir a una nueva pestaña
+        function cerrarModalYRedirigir() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none'; // Cierra el modal
+            window.open('ProyectosPublicados.html', '_blank'); // Abre la nueva pestaña
+        }
 
-        const modal = document.getElementById('modal');
-        modal.style.display = 'flex';
-    }
+        // Función para cerrar el modal sin redirigir
+        function cerrarModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
+    </script>
 
-    function cerrarModal() {
-        const modal = document.getElementById('modal');
-        modal.style.display = 'none';
-    }
-</script>
 </body>
+
 </html>

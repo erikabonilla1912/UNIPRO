@@ -97,7 +97,7 @@ header form button:hover {
 }
 
 /* Estilos para el formulario de Publicar Proyecto */
-#project-form {
+#form-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -112,44 +112,44 @@ header form button:hover {
     /* Ancho máximo del formulario */
 }
 
-#project-form h2 {
+#form-container h2 {
     font-size: 2em;
     color: rgb(0, 0, 0);
     text-align: center;
     margin-bottom: 20px;
 }
 
-#project-form form {
+#form-container form {
     width: 100%;
 }
 
-#project-form div {
+#form-container div {
     margin-bottom: 15px;
 }
 
-#project-form label {
+#form-container label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
 }
 
-#project-form input[type="text"],
-#project-form textarea,
-#project-form input[type="file"] {
+#form-container input[type="text"],
+#form-container textarea,
+#form-container input[type="file"] {
     width: calc(100% - 20px);
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
-#project-form textarea {
+#form-container textarea {
     resize: vertical;
     /* Permitir redimensionar verticalmente */
     height: 100px;
     /* Altura inicial del textarea */
 }
 
-#project-form button[type="submit"] {
+#form-container button[type="submit"] {
     padding: 10px 20px;
     background-color: #2b8cb9;
     color: white;
@@ -159,7 +159,7 @@ header form button:hover {
     cursor: pointer;
 }
 
-#project-form button[type="submit"]:hover {
+#form-container button[type="submit"]:hover {
     background-color: rgb(43, 174, 226);
 }
 
@@ -196,4 +196,23 @@ footer {
         bottom: 20px;
         right: 20px;
     }
+}
+
+/* Estilos para los campos Fecha de Inicio, Categoría, Presupuesto Estimado, Correo de Contacto */
+#form-container input[type="date"],
+#form-container select,
+#form-container input[type="email"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px; /* Para mantener el espacio entre los campos */
+}
+
+#form-container select {
+    font-size: 16px;
+}
+
+#form-container input[type="email"] {
+    font-size: 16px;
 }

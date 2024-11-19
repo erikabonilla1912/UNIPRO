@@ -71,13 +71,28 @@ app.post('/procesar_reclamo', async (req, res) => {
     res.send('Reclamo enviado');
 });
 
-// Ruta para procesar la publicación de proyecto
-app.post('/procesar_proyecto', async (req, res) => {
-    const { usuario, titulo, descripcion, imagen, video } = req.body;
-    const nuevoProyecto = new Proyecto({ usuario, titulo, descripcion, imagen, video });
-    await nuevoProyecto.save();
-    res.send('Proyecto publicado');
+    // Ruta para procesar el formulario de proyecto
+app.post('/procesar_proyecto', (req, res) => {
+    const { usuario, titulo, descripcion } = req.body;
+    const nuevoProyecto = new Proyecto({ usuario, titulo, descripcion
+    });
+  
+    nuevoProyecto.save()
+    .then(() => res.send('Proyecto publicado exitosamente.'))
+    .catch((err) => res.status(400).send('Error al publicar el proyecto: ' + err));
 });
+
+// Asegúrate de que esta ruta esté configurada en tu backend
+app.get('/proyectos', async (req, res) => {
+    try {
+        const proyectos = await Proyecto.find().populate('usuario');
+        res.json(proyectos); // Envía los proyectos como JSON
+    } catch (error) {
+        console.error('Error al obtener los proyectos', error);
+        res.status(500).send('Error al obtener los proyectos');
+    }
+});
+
 
 // Iniciar el servidor
 app.listen(3000, () => {
