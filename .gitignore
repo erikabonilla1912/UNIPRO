@@ -1,2 +1,36 @@
+New-Item -Name ".gitignore" -ItemType "file"
+```
+
+Luego ábrelo en tu editor y pega esto:
+```
+# Dependencies
 node_modules/
+**/node_modules/
+
+# Environment variables
 .env
+**/.env
+
+# Build outputs
+dist/
+**/dist/
+coverage/
+**/coverage/
+
+# Uploads
+backend/uploads/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Angular cache
+.angular/
+
+# IDE
+.vscode/
+.idea/

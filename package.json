@@ -1,14 +1,16 @@
 {
-  "dependencies": {
-    "bcrypt": "^5.1.1",
-    "body-parser": "^1.20.2",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.4.0"
-  },
+  "name": "unipro-monorepo",
+  "version": "1.0.0",
+  "private": true,
   "scripts": {
-    "test": "jest",
-    "supertest": "^7.0.0"
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm start",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "test": "cd backend && npm test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }
