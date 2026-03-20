@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>ERD — UNIPRO</title>
+
+<style>
+  body {
+    margin: 0;
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f9f9f7;
+    color: #1a1a18;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  p {
+    font-size: 14px;
+    color: #717182;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.1);
+    padding: 24px;
+  }
+
+  #erd svg text {
+    fill: #1a1a18 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Modelo ER — UNIPRO</h1>
+<p>Relación entre usuarios, proyectos, archivos y reclamos.</p>
+
+<div class="card">
+  <div id="erd"></div>
+</div>
+
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+
+await document.fonts.ready;
+
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  themeVariables: {
+    fontSize: '13px',
+    fontFamily: '"Segoe UI", sans-serif',
+    lineColor: '#8a8a8a',
+    textColor: '#1a1a18',
+    primaryColor: '#ffffff',
+    primaryBorderColor: '#d0d0d0'
+  },
+});
+
+const { svg } = await mermaid.render('erd-svg', `erDiagram
+  USER {
+    ObjectId _id PK
+    string name
+    string email
+    string password
+    string university
+    string role
+    boolean active
+    date createdAt
+    date updatedAt
+  }
+  PROJECT {
+    ObjectId _id PK
+    string title
+    string description
+    string category
+    array tags
+    string university
+    ObjectId author FK
+    string image
+    number views
+    number downloads
+    string status
+    date createdAt
+    date updatedAt
+  }
+  RECLAMO {
+    ObjectId _id PK
+    ObjectId user FK
+    string subject
+    string message
+    string status
+    string response
+    date createdAt
+    date updatedAt
+  }
+  FILE {
+    ObjectId _id PK
+    ObjectId project FK
+    string name
+    string path
+    number size
+  }
+  USER ||--o{ PROJECT : "publica"
+  USER ||--o{ RECLAMO : "envía"
+  PROJECT ||--o{ FILE : "adjunta"
+`);
+
+document.getElementById('erd').innerHTML = svg;
+
+document.querySelectorAll('#erd svg .node').forEach(node => {
+  const firstPath = node.querySelector('path[d]');
+  if (!firstPath) return;
+
+  const d = firstPath.getAttribute('d');
+  const nums = d.match(/-?[\d.]+/g)?.map(Number);
+  if (!nums || nums.length < 8) return;
+
+  const xs = [nums[0], nums[2], nums[4], nums[6]];
+  const ys = [nums[1], nums[3], nums[5], nums[7]];
+  const x = Math.min(...xs), y = Math.min(...ys);
+  const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', x);
+  rect.setAttribute('y', y);
+  rect.setAttribute('width', w);
+  rect.setAttribute('height', h);
+  rect.setAttribute('rx', '10');
+
+  rect.setAttribute('fill', '#ffffff');
+  rect.setAttribute('stroke', '#d0d0d0');
+  rect.setAttribute('stroke-width', '1');
+
+  firstPath.replaceWith(rect);
+});
+
+document.querySelectorAll('#erd svg .row-rect-odd path, #erd svg .row-rect-even path')
+.forEach(p => p.setAttribute('stroke', 'none'));
+
+document.querySelectorAll('#erd svg text').forEach(t => {
+  t.setAttribute('fill', '#1a1a18');
+});
+
+document.querySelectorAll('#erd svg path').forEach(p => {
+  if (!p.getAttribute('fill')) {
+    p.setAttribute('stroke', '#8a8a8a');
+    p.setAttribute('stroke-width', '1');
+  }
+});
+</script>
+
+</body>
+</html>
