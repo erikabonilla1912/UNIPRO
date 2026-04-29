@@ -27,9 +27,11 @@ import { AuthService } from '../../services/auth.service';
             @if (auth.isLoggedIn()) {
               <a routerLink="/quejas-reclamos" routerLinkActive="text-blue-600"
                  class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Reclamos</a>
-            @if (auth.currentUser()?.role === 'admin') {
+              @if (auth.currentUser()?.role === 'admin') {
                 <a routerLink="/admin" routerLinkActive="text-blue-600"
                    class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">⚙ Admin</a>
+                <a routerLink="/dashboard" routerLinkActive="text-blue-600"
+                   class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">📊 Dashboard</a>
               }
             }
           </nav>

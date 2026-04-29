@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProjectService } from '../../services/project.service';
+import { IaService } from '../../services/ia.service';
 import { CATEGORIES } from '../../models';
 
 @Component({
@@ -41,11 +42,28 @@ import { CATEGORIES } from '../../models';
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="block text-sm font-medium text-gray-700">Descripción *</label>
+                  <button type="button" (click)="mejorarConIA()"
+                          [disabled]="mejorandoIA || !form.get('title')?.value"
+                          class="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg text-white disabled:opacity-50 transition-colors"
+                          style="background: linear-gradient(135deg, #4F46E5, #7C3AED)">
+                    @if (mejorandoIA) {
+                      <span>Mejorando...</span>
+                    } @else {
+                      <span>✨ Mejorar con IA</span>
+                    }
+                  </button>
+                </div>
                 <textarea formControlName="description" rows="6"
                           placeholder="Describe tu proyecto, objetivos, metodología y resultados..."
                           class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
                 <p class="text-xs text-gray-500 mt-1">Mínimo 100 caracteres</p>
+                @if (iaMsg) {
+                  <p class="text-xs mt-1" [class.text-green-600]="iaMsg.includes('mejorada')" [class.text-red-500]="!iaMsg.includes('mejorada')">
+                    {{ iaMsg }}
+                  </p>
+                }
               </div>
 
               <div class="grid md:grid-cols-2 gap-6">
@@ -118,13 +136,16 @@ import { CATEGORIES } from '../../models';
 export class PublishProjectComponent {
   private fb = inject(FormBuilder);
   private projectService = inject(ProjectService);
+  private iaService = inject(IaService);
   private router = inject(Router);
 
   categories = CATEGORIES;
   files: File[] = [];
   submitted = false;
   loading = false;
+  mejorandoIA = false;
   errorMsg = '';
+  iaMsg = '';
 
   form = this.fb.group({
     title: ['', Validators.required],
@@ -139,8 +160,42 @@ export class PublishProjectComponent {
     if (input.files) this.files = Array.from(input.files);
   }
 
+  mejorarConIA() {
+    const titulo = this.form.get('title')?.value || '';
+    const descripcion = this.form.get('description')?.value || '';
+    const categoria = this.form.get('category')?.value || '';
+
+    if (!titulo) {
+      this.iaMsg = 'Escribe primero el título del proyecto';
+      return;
+    }
+
+    this.mejorandoIA = true;
+    this.iaMsg = '';
+
+    this.iaService.mejorarDescripcion(titulo, descripcion, categoria).subscribe({
+      next: (res) => {
+        this.form.patchValue({ description: res.descripcion });
+        this.iaMsg = 'Descripcion mejorada con IA';
+        this.mejorandoIA = false;
+      },
+      error: () => {
+        this.iaMsg = 'Error al mejorar la descripcion';
+        this.mejorandoIA = false;
+      },
+    });
+  }
+
   onSubmit() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      if (this.form.get('description')?.errors?.['minlength']) {
+        this.errorMsg = 'La descripción debe tener mínimo 100 caracteres';
+      } else {
+        this.errorMsg = 'Por favor completa todos los campos obligatorios';
+      }
+      return;
+    }
     this.loading = true;
     this.errorMsg = '';
 

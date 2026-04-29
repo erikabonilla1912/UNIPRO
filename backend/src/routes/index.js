@@ -59,4 +59,60 @@ router.get('/admin/proyectos', protect, adminOnly, async (req, res) => {
   }
 });
 
+// IA - Gemini
+const { mejorarDescripcion, chat, sugerenciasBusqueda } = require('../controllers/procesar_ia');
+router.post('/ia/mejorar-descripcion', protect, mejorarDescripcion);
+router.post('/ia/chat', chat);
+router.post('/ia/sugerencias-busqueda', sugerenciasBusqueda);
+
+// Dashboard analytics
+router.get('/admin/dashboard', protect, adminOnly, async (req, res) => {
+  try {
+    const User = require('../models/userModel');
+    const Project = require('../models/proyectoModel');
+    const Reclamo = require('../models/reclamoModel');
+
+    const [
+      totalUsers,
+      totalProjects,
+      pendingProjects,
+      approvedProjects,
+      totalReclamos,
+      openReclamos,
+      projectsByCategory,
+      recentProjects,
+      topProjects,
+    ] = await Promise.all([
+      User.countDocuments(),
+      Project.countDocuments(),
+      Project.countDocuments({ status: 'pending' }),
+      Project.countDocuments({ status: 'approved' }),
+      Reclamo.countDocuments(),
+      Reclamo.countDocuments({ status: 'open' }),
+      Project.aggregate([
+        { $group: { _id: '$category', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+      ]),
+      Project.find().sort({ createdAt: -1 }).limit(5).select('title status createdAt university'),
+      Project.find({ status: 'approved' }).sort({ views: -1 }).limit(5).select('title views downloads'),
+    ]);
+
+    res.json({
+      stats: {
+        totalUsers,
+        totalProjects,
+        pendingProjects,
+        approvedProjects,
+        totalReclamos,
+        openReclamos,
+      },
+      projectsByCategory,
+      recentProjects,
+      topProjects,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error', error: error.message });
+  }
+});
+
 module.exports = router;
