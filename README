@@ -1,0 +1,252 @@
+# UNIPRO — Monorepo
+
+Plataforma de proyectos universitarios. Monorepo con **Angular 17** en el frontend y **Node.js + Express + MongoDB Atlas** en el backend.
+
+---
+
+## Estructura del Proyecto
+```
+UNIPRO/
+├── package.json                  ← Scripts raíz (dev, build, test)
+├── .gitignore
+├── docs/                         ← Documentación y diagramas
+│   ├── diagrama_componentes.html
+│   ├── modelo_clases.html
+│   ├── modelo_entidad_relacion.html
+│   ├── casos_de_uso.html
+│   └── diagrama_secuencia.html
+│
+├── backend/                      ← API REST Node.js + Express
+│   ├── src/
+│   │   ├── server.js             ← Punto de entrada
+│   │   ├── config/
+│   │   │   └── database.js       ← Conexión MongoDB
+│   │   ├── models/
+│   │   │   ├── userModel.js      ← Esquema de usuarios
+│   │   │   ├── proyectoModel.js  ← Esquema de proyectos
+│   │   │   └── reclamoModel.js   ← Esquema de reclamos
+│   │   ├── controllers/
+│   │   │   ├── procesar_login.js     ← Auth (register/login)
+│   │   │   ├── procesar_proyecto.js  ← CRUD proyectos
+│   │   │   ├── procesar_reclamo.js   ← Reclamos
+│   │   │   └── procesar_busqueda.js  ← Búsqueda
+│   │   ├── routes/
+│   │   │   └── index.js          ← Todas las rutas API
+│   │   └── middleware/
+│   │       └── authMiddleware.js  ← JWT protect + adminOnly
+│   ├── tests/
+│   │   ├── procesar_login.test.js
+│   │   └── procesar_proyecto.test.js
+│   ├── .env.example
+│   ├── jest.config.js
+│   └── package.json
+│
+└── frontend/                     ← App Angular 17 standalone
+    ├── src/
+    │   ├── main.ts               ← Bootstrap
+    │   ├── index.html
+    │   ├── styles.css
+    │   └── app/
+    │       ├── app.component.ts  ← Root (Header + Router + Footer)
+    │       ├── app.config.ts     ← provideRouter, HttpClient, interceptor
+    │       ├── app.routes.ts     ← Lazy-loaded routes
+    │       ├── models/
+    │       │   └── index.ts      ← Interfaces TS (User, Project, Reclamo)
+    │       ├── services/
+    │       │   ├── auth.service.ts       ← Login, register, logout (signals)
+    │       │   ├── auth.interceptor.ts   ← Adjunta JWT en cada request
+    │       │   ├── project.service.ts    ← CRUD proyectos
+    │       │   └── reclamo.service.ts    ← CRUD reclamos
+    │       ├── guards/
+    │       │   └── auth.guard.ts         ← Protege rutas privadas
+    │       ├── components/
+    │       │   ├── header/
+    │       │   ├── footer/
+    │       │   └── project-card/
+    │       └── pages/
+    │           ├── home/
+    │           ├── projects/
+    │           ├── project-detail/
+    │           ├── publish-project/
+    │           ├── login/
+    │           ├── register/
+    │           ├── reclamos/
+    │           ├── about/
+    │           ├── admin/
+    │           └── not-found/
+    ├── proxy.conf.json           ← Redirige /api → localhost:3000
+    ├── angular.json
+    ├── tsconfig.json
+    └── package.json
+```
+
+---
+
+## Documentación
+
+La carpeta `docs/` contiene los diagramas de arquitectura del proyecto:
+
+| Archivo | Descripción |
+|---------|-------------|
+| `diagrama_componentes.html` | Componentes Angular, servicios, backend y base de datos |
+| `modelo_clases.html` | Clases del sistema con atributos, métodos y relaciones |
+| `modelo_entidad_relacion.html` | Entidades MongoDB con PK, FK y cardinalidades |
+| `casos_de_uso.html` | Actores (Visitante, Usuario, Admin) y sus casos de uso |
+| `diagrama_secuencia.html` | Flujo de mensajes para login, listar, publicar y aprobar |
+
+---
+
+## Arquitectura
+
+El proyecto usa una arquitectura **Monorepo** con patrón **MVC** en el backend, **API REST** para la comunicación entre capas, y **arquitectura basada en componentes** en el frontend con Angular 17.
+```
+Angular (cliente) <-> HTTP/REST <-> Express (servidor) <-> MongoDB Atlas
+```
+
+---
+
+## Configuración Inicial
+
+### 1. Instalar dependencias
+```bash
+npm run install:all
+```
+
+### 2. Configurar variables de entorno del backend
+```bash
+cd backend
+cp .env.example .env
+```
+
+Editar `.env`:
+```env
+PORT=3000
+MONGODB_URI=mongodb+srv://<usuario>:<password>@cluster0.xxxxx.mongodb.net/unipro?retryWrites=true&w=majority
+JWT_SECRET=cambia_esto_por_un_secreto_seguro
+JWT_EXPIRES_IN=7d
+NODE_ENV=development
+FRONTEND_URL=http://localhost:4200
+```
+
+> El archivo `.env` nunca se sube a GitHub, está en `.gitignore`.
+
+### 3. Configurar MongoDB Atlas
+
+1. Crear cuenta en `https://www.mongodb.com/atlas`
+2. Crear un cluster gratuito (M0)
+3. En **Database Access** crear un usuario con contraseña
+4. En **Network Access** agregar `0.0.0.0/0`
+5. Copiar la cadena de conexión y pegarla en `.env`
+
+---
+
+## Correr el Proyecto
+
+### Modo desarrollo (ambos simultáneamente)
+```bash
+npm run dev
+```
+
+Esto levanta:
+- Backend en `http://localhost:3000`
+- Frontend en `http://localhost:4200`
+
+### Por separado
+```bash
+npm run dev:backend
+npm run dev:frontend
+```
+
+---
+
+## API REST — Endpoints
+
+### Autenticación
+
+| Método | Ruta | Descripción | Auth |
+|--------|------|-------------|------|
+| POST | `/api/auth/register` | Registrar usuario | No |
+| POST | `/api/auth/login` | Iniciar sesión | No |
+| GET | `/api/auth/me` | Perfil actual | Si |
+
+### Proyectos
+
+| Método | Ruta | Descripción | Auth |
+|--------|------|-------------|------|
+| GET | `/api/proyectos` | Listar proyectos aprobados | No |
+| GET | `/api/proyectos/:id` | Detalle de un proyecto | No |
+| POST | `/api/proyectos` | Crear proyecto | Si |
+| PUT | `/api/proyectos/:id` | Actualizar proyecto | Si |
+| DELETE | `/api/proyectos/:id` | Eliminar proyecto | Si |
+| PATCH | `/api/proyectos/:id/status` | Cambiar estado | Admin |
+
+### Búsqueda, Reclamos y Admin
+
+| Método | Ruta | Descripción | Auth |
+|--------|------|-------------|------|
+| GET | `/api/busqueda?q=texto` | Buscar proyectos | No |
+| POST | `/api/reclamos` | Crear reclamo | Si |
+| GET | `/api/reclamos/mis-reclamos` | Mis reclamos | Si |
+| GET | `/api/reclamos` | Todos los reclamos | Admin |
+| GET | `/api/admin/proyectos` | Todos los proyectos | Admin |
+
+### Query params disponibles en `/api/proyectos`
+```
+?category=Ingeniería de Software
+?search=react
+?page=2
+?limit=12
+```
+
+---
+
+## Autenticación JWT
+
+El frontend guarda el token en `localStorage` y el interceptor Angular lo adjunta automáticamente en cada petición:
+```
+Authorization: Bearer <token>
+```
+
+Para hacer un usuario admin, cambiar en MongoDB Atlas:
+```json
+{ "role": "admin" }
+```
+
+---
+
+## Tests
+```bash
+npm test
+cd backend && npm test
+cd backend && npm test -- --coverage
+```
+
+---
+
+## Tecnologías
+
+| Capa | Tecnología |
+|------|------------|
+| Frontend | Angular 17, TypeScript, Tailwind CSS |
+| Backend | Node.js, Express 4 |
+| Base de datos | MongoDB Atlas + Mongoose |
+| Auth | JWT + bcryptjs |
+| Testing | Jest + Supertest |
+| Dev tools | Nodemon, Concurrently |
+
+---
+
+## Rutas del Frontend
+
+| Ruta | Componente | Protegida |
+|------|------------|-----------|
+| `/` | HomeComponent | No |
+| `/proyectos` | ProjectsComponent | No |
+| `/proyectos/:id` | ProjectDetailComponent | No |
+| `/publicar` | PublishProjectComponent | Si |
+| `/login` | LoginComponent | No |
+| `/registro` | RegisterComponent | No |
+| `/quejas-reclamos` | ReclamosComponent | Si |
+| `/quienes-somos` | AboutComponent | No |
+| `/admin` | AdminComponent | Admin |
+| `/**` | NotFoundComponent | No |
